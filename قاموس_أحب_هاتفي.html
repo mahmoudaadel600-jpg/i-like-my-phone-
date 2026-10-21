@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قاموس درس أحب هاتفي</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#e0edff 0%,#f0f6ff 50%,#e8f1ff 100%);min-height:100vh;direction:rtl}
+
+.hero{background:linear-gradient(135deg,#2563eb,#3b82f6,#60a5fa);padding:32px 24px 28px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1)}
+.hero::after{content:'';position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero-icon{font-size:48px;margin-bottom:10px;display:block}
+.hero h1{color:#fff;font-size:26px;font-weight:700;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hero p{color:rgba(255,255,255,.88);font-size:14px;margin-bottom:16px}
+.audio-test-btn{background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.5);padding:8px 22px;border-radius:50px;font-size:14px;cursor:pointer;backdrop-filter:blur(4px);transition:all .2s;font-family:inherit}
+.audio-test-btn:hover{background:rgba(255,255,255,.35)}
+
+.controls{padding:16px 20px;background:#fff;border-bottom:1px solid #dfeafc;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(37,99,235,.08)}
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap input{width:100%;padding:10px 44px 10px 16px;border:1.5px solid #bfd7fb;border-radius:50px;font-size:14px;outline:none;background:#f7faff;color:#1a2a4a;transition:border .2s;font-family:inherit;direction:rtl}
+.search-wrap input:focus{border-color:#2563eb;background:#fff}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;color:#2563eb}
+.count{text-align:center;font-size:12px;color:#5b82c4;margin-bottom:10px}
+
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ftag{padding:6px 16px;border-radius:50px;border:1.5px solid #bfd7fb;background:#f0f6ff;color:#2a4f9e;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;font-family:inherit}
+.ftag:hover{border-color:#2563eb;background:#e0edff}
+.ftag.active{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(37,99,235,.3)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding:20px}
+
+.card{background:#fff;border-radius:18px;border:1.5px solid #d3e3fb;padding:18px 14px 14px;text-align:center;cursor:pointer;transition:all .22s;position:relative;box-shadow:0 2px 8px rgba(37,99,235,.06)}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(37,99,235,.18);border-color:#3b82f6}
+.card.playing{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.2),0 8px 24px rgba(37,99,235,.18)}
+
+.card-icon{width:56px;height:56px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,#e0edff,#bfd7fb)}
+.card-word{font-size:17px;font-weight:700;color:#1a2a4a;margin-bottom:4px;line-height:1.4}
+.card-en{display:inline-block;padding:3px 12px;border-radius:50px;font-size:11px;font-weight:600;color:#fff;background:linear-gradient(135deg,#2563eb,#3b82f6);margin-bottom:8px}
+.card-ex{font-size:12px;color:#4a5f8a;line-height:1.6;min-height:36px}
+.audio-btn{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#3b82f6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:8px auto 0;transition:all .2s;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.audio-btn:hover{transform:scale(1.1);box-shadow:0 4px 14px rgba(37,99,235,.45)}
+.audio-btn svg{width:14px;height:14px;fill:#fff}
+.audio-btn.playing-anim{animation:pulse-ring .6s ease-in-out infinite}
+@keyframes pulse-ring{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.5)}50%{box-shadow:0 0 0 8px rgba(37,99,235,0)}}
+
+.cat-badge{position:absolute;top:8px;left:8px;width:10px;height:10px;border-radius:50%}
+.cat-lesson{background:#2563eb}
+.cat-adj{background:#f59e0b}
+.cat-verb{background:#6366f1}
+.cat-phrase{background:#ec4899}
+.cat-opinion{background:#e11d48}
+.cat-agree{background:#059669}
+.cat-disagree{background:#dc2626}
+.cat-connect{background:#7c3aed}
+.cat-time{background:#0284c7}.cat-compare{background:#7c3aed}
+
+.section-divider{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:6px 0 2px}
+.section-divider span{font-size:13px;font-weight:700;color:#2563eb;white-space:nowrap}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1.5px;background:linear-gradient(to left,#d3e3fb,transparent)}
+.section-divider::after{background:linear-gradient(to right,#d3e3fb,transparent)}
+
+.no-results{grid-column:1/-1;text-align:center;padding:40px;color:#5b82c4;font-size:16px}
+
+.legend{padding:12px 20px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;border-bottom:1px solid #dfeafc;background:#fff}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#4a5f8a}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+footer{text-align:center;padding:20px;font-size:12px;color:#5b82c4}
+
+/* Modal for special phrase cards */
+.phrase-section{background:linear-gradient(135deg,#fff9f0,#fff5eb);border:1.5px solid #fcd8a8}
+.phrase-section .card-en{background:linear-gradient(135deg,#f59e0b,#fb923c)}
+.opinion-section{background:linear-gradient(135deg,#fff0f5,#ffe4ef);border:1.5px solid #fbb6ce}
+.opinion-section .card-en{background:linear-gradient(135deg,#ec4899,#f43f5e)}
+.agree-section{background:linear-gradient(135deg,#f0fff4,#dcfce7);border:1.5px solid #86efac}
+.agree-section .card-en{background:linear-gradient(135deg,#059669,#10b981)}
+.disagree-section{background:linear-gradient(135deg,#fff0f0,#fee2e2);border:1.5px solid #fca5a5}
+.disagree-section .card-en{background:linear-gradient(135deg,#dc2626,#ef4444)}
+.connect-section{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd}
+.connect-section .card-en{background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-icon">📱</span>
+  <h1>قَامُوسُ دَرْسِ أُحِبُّ هَاتِفِي 📱</h1>
+  <p>كَلِمَاتٌ مُهِمَّةٌ لِلتَّحَدُّثِ وَالْكِتَابَةِ · اضغط على 🔊 لِسَمَاعِ الْكَلِمَةِ وَالْمِثَالِ</p>
+  <button class="audio-test-btn" onclick="testAudio()">🔊 اختبار الصوت</button>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="ابحث عن كلمة..." oninput="filterCards()">
+  </div>
+  <div class="count" id="countLabel">جميع الكلمات</div>
+  <div class="filter-row" id="filterRow"></div>
+</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#2563eb"></div>الأسماء</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>الصفات</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#6366f1"></div>الأفعال</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#7c3aed"></div>ألفاظ المقارنة</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#0284c7"></div>ظروف الزمان</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#ec4899"></div>عبارات الرأي</div>
+</div>
+
+<div class="grid" id="cardsGrid"></div>
+
+<footer>📱 قاموس أحب هاتفي · الصف السابع · AE · 2026</footer>
+
+<script>
+const WORDS = [
+  {id:1, ar:'الْهَاتِف الْمَحْمُول', en:'Mobile phone', ex:'أُحِبُّ هَاتِفِي الْمَحْمُولَ كَثِيرًا.', cat:'lesson', icon:'📱'},
+  {id:2, ar:'مُمَيِّزَات وَعُيُوب', en:'Advantages & Disadvantages', ex:'لِلْهَاتِفِ مُمَيِّزَاتٌ وَعُيُوبٌ.', cat:'lesson', icon:'⚖️'},
+  {id:3, ar:'التَّوَاصُل', en:'Communication', ex:'يُسَاعِدُنِي الْهَاتِفُ فِي التَّوَاصُلِ مَعَ أَهْلِي.', cat:'lesson', icon:'💬'},
+  {id:4, ar:'الْأَهْل', en:'Family', ex:'أَتَّصِلُ بِأَهْلِي كُلَّ يَوْمٍ.', cat:'lesson', icon:'👨‍👩‍👧'},
+  {id:5, ar:'الْأَصْدِقَاء', en:'Friends', ex:'أَتَحَدَّثُ مَعَ أَصْدِقَائِي بِالْهَاتِفِ.', cat:'lesson', icon:'🧑‍🤝‍🧑'},
+  {id:6, ar:'مُشْكِلَة / مَشَاكِل', en:'Problem / Problems', ex:'كَثْرَةُ اسْتِخْدَامِ الْهَاتِفِ تُسَبِّبُ مَشَاكِلَ.', cat:'lesson', icon:'⚠️'},
+  {id:7, ar:'الْبَصَر', en:'Eyesight', ex:'الْجُلُوسُ الطَّوِيلُ أَمَامَ الشَّاشَةِ يُؤْذِي الْبَصَرَ.', cat:'lesson', icon:'👁️'},
+  {id:8, ar:'الرَّقَبَة', en:'Neck', ex:'النَّظَرُ إِلَى الْهَاتِفِ طَوِيلًا يُؤْلِمُ الرَّقَبَةَ.', cat:'lesson', icon:'🙆'},
+  {id:9, ar:'الذَّاكِرَة', en:'Memory', ex:'ذَاكِرَةُ هَاتِفِي مَمْلُوءَةٌ بِالصُّوَرِ.', cat:'lesson', icon:'🧠'},
+  {id:10, ar:'تَطْبِيقَات', en:'Applications (Apps)', ex:'عَلَى هَاتِفِي تَطْبِيقَاتٌ مُفِيدَةٌ لِلدِّرَاسَةِ.', cat:'lesson', icon:'🧩'},
+  {id:11, ar:'اكْتِشَاف', en:'Discovery', ex:'أَسْتَمْتِعُ بِاكْتِشَافِ أَشْيَاءَ جَدِيدَةٍ.', cat:'lesson', icon:'🔭'},
+  {id:12, ar:'اسْتِخْدَام', en:'Use', ex:'اسْتِخْدَامُ الْهَاتِفِ بِاعْتِدَالٍ مُفِيدٌ.', cat:'lesson', icon:'🔧'},
+  {id:13, ar:'بِحِكْمَة', en:'Wisely', ex:'أَسْتَخْدِمُ هَاتِفِي بِحِكْمَةٍ.', cat:'lesson', icon:'🧘'},
+  {id:14, ar:'وَاجِب / وَاجِبَات', en:'Homework / Duties', ex:'أَكْتُبُ وَاجِبَاتِي قَبْلَ اسْتِخْدَامِ الْهَاتِفِ.', cat:'lesson', icon:'📝'},
+  {id:15, ar:'انْتِهَاء', en:'End / Finishing', ex:'بَعْدَ انْتِهَاءِ الْوَاجِبِ أَسْتَخْدِمُ هَاتِفِي.', cat:'lesson', icon:'🏁'},
+  {id:16, ar:'يُضَيِّعُ الْوَقْتَ', en:'Wastes time', ex:'الْهَاتِفُ يُضَيِّعُ الْوَقْتَ إِذَا اسْتَخْدَمْتُهُ كَثِيرًا.', cat:'lesson', icon:'⌛'},
+  {id:17, ar:'مُدْهِش', en:'Amazing', ex:'هَاتِفِي الْجَدِيدُ مُدْهِشٌ.', cat:'adj', icon:'🤩'},
+  {id:18, ar:'جَمِيل', en:'Beautiful', ex:'شَاشَةُ الْهَاتِفِ جَمِيلَةٌ، وَالتَّصْمِيمُ جَمِيلٌ.', cat:'adj', icon:'🌸'},
+  {id:19, ar:'رَائِعَة', en:'Wonderful', ex:'الْكَامِيرَا فِي هَاتِفِي رَائِعَةٌ.', cat:'adj', icon:'✨'},
+  {id:20, ar:'سَعِيدَة', en:'Happy', ex:'أُسْرَتِي سَعِيدَةٌ بِالْهَاتِفِ الْجَدِيدِ.', cat:'adj', icon:'😊'},
+  {id:21, ar:'وَاسِعَة', en:'Wide', ex:'شَاشَةُ هَاتِفِي وَاسِعَةٌ.', cat:'adj', icon:'📺'},
+  {id:22, ar:'نَشِيطَة', en:'Active', ex:'أُخْتِي نَشِيطَةٌ، وَتَسْتَخْدِمُ الْهَاتِفَ قَلِيلًا.', cat:'adj', icon:'⚡'},
+  {id:23, ar:'جَدِيدَة', en:'New', ex:'اشْتَرَيْتُ سَمَّاعَةً جَدِيدَةً لِلْهَاتِفِ.', cat:'adj', icon:'🆕'},
+  {id:24, ar:'صِحِّيَّة', en:'Healthy', ex:'الْعَادَاتُ الصِّحِّيَّةُ مُهِمَّةٌ لِجَسَدِي.', cat:'adj', icon:'🍎'},
+  {id:25, ar:'مُفِيدَة', en:'Useful', ex:'التَّطْبِيقَاتُ التَّعْلِيمِيَّةُ مُفِيدَةٌ.', cat:'adj', icon:'👍'},
+  {id:26, ar:'مُمْتِعَة', en:'Enjoyable / Fun', ex:'الْأَلْعَابُ مُمْتِعَةٌ.', cat:'adj', icon:'🎮'},
+  {id:27, ar:'أُفَضِّلُ', en:'I prefer', ex:'أُفَضِّلُ اسْتِخْدَامَ الْهَاتِفِ فِي الْمَسَاءِ.', cat:'verb', icon:'⭐'},
+  {id:28, ar:'يُفَضِّلُ', en:'He prefers', ex:'أَخِي يُفَضِّلُ الْأَلْعَابَ.', cat:'verb', icon:'🙋'},
+  {id:29, ar:'أَسْتَمْتِعُ', en:'I enjoy', ex:'أَسْتَمْتِعُ بِمُشَاهَدَةِ الْفِيدْيُوهَاتِ.', cat:'verb', icon:'🎉'},
+  {id:30, ar:'أَشْعُرُ', en:'I feel', ex:'أَشْعُرُ بِالتَّعَبِ بَعْدَ اللَّعِبِ طَوِيلًا.', cat:'verb', icon:'💭'},
+  {id:31, ar:'أَنْ تَعْرِفَ', en:'To know', ex:'أُرِيدُ أَنْ أَعْرِفَ الْأَخْبَارَ.', cat:'verb', icon:'🔍'},
+  {id:32, ar:'يُسَبِّبُ', en:'Causes', ex:'السَّهَرُ مَعَ الْهَاتِفِ يُسَبِّبُ التَّعَبَ.', cat:'verb', icon:'😖'},
+  {id:33, ar:'يُضَيِّعُ', en:'Wastes / Loses', ex:'اللَّعِبُ الْكَثِيرُ يُضَيِّعُ الْوَقْتَ.', cat:'verb', icon:'💸'},
+  {id:34, ar:'تُنَمِّي', en:'Develops', ex:'التَّطْبِيقَاتُ التَّعْلِيمِيَّةُ تُنَمِّي مَعْلُومَاتِي.', cat:'verb', icon:'🌱'},
+  {id:35, ar:'التَّعَلُّم', en:'Learning', ex:'أُحِبُّ التَّعَلُّمَ بِوَاسِطَةِ الْهَاتِفِ.', cat:'verb', icon:'📚'},
+  {id:36, ar:'يُسَاعِدُنِي', en:'Helps me', ex:'الْهَاتِفُ يُسَاعِدُنِي فِي الْبَحْثِ عَنِ الْمَعْلُومَاتِ.', cat:'verb', icon:'🤝'},
+  {id:37, ar:'أَرَى', en:'I see / I think (in my opinion)', ex:'أَرَى أَنَّ الْهَاتِفَ مُفِيدٌ إِذَا اسْتَخْدَمْنَاهُ بِحِكْمَةٍ.', cat:'opinion', icon:'👁️'},
+  {id:38, ar:'فِي الْحَقِيقَةِ', en:'In fact / Actually', ex:'فِي الْحَقِيقَةِ، الْهَاتِفُ لَهُ مُمَيِّزَاتٌ وَعُيُوبٌ.', cat:'opinion', icon:'📌'},
+  {id:39, ar:'أَحْيَانًا', en:'Sometimes', ex:'أَحْيَانًا أَلْعَبُ بِالْهَاتِفِ بَعْدَ الدِّرَاسَةِ.', cat:'time', icon:'🌤️'},
+  {id:40, ar:'دَائِمًا', en:'Always', ex:'دَائِمًا أَكْتُبُ وَاجِبِي أَوَّلًا.', cat:'time', icon:'♾️'},
+  {id:41, ar:'مَرَّة', en:'Once / Time', ex:'أَتَّصِلُ بِجَدِّي مَرَّةً كُلَّ أُسْبُوعٍ.', cat:'time', icon:'☝️'},
+  {id:42, ar:'أَفْضَلُ مِنْ', en:'Better than', ex:'الْكِتَابُ أَفْضَلُ مِنَ الْهَاتِفِ لِلْقِرَاءَةِ.', cat:'compare', icon:'🏆'},
+  {id:43, ar:'أَجْمَلُ مِنْ', en:'More beautiful than', ex:'هَذَا الْهَاتِفُ أَجْمَلُ مِنْ هَاتِفِي الْقَدِيمِ.', cat:'compare', icon:'💎'},
+  {id:44, ar:'بَيْنَمَا', en:'While', ex:'أَسْتَخْدِمُ الْهَاتِفَ لِلتَّعَلُّمِ، بَيْنَمَا أَخِي يَسْتَخْدِمُهُ لِلَّعِبِ.', cat:'compare', icon:'↔️'},
+  {id:45, ar:'فِي حِينِ أَنَّ', en:'Whereas / While', ex:'الْهَاتِفُ مُفِيدٌ، فِي حِينِ أَنَّ كَثْرَةَ اسْتِخْدَامِهِ ضَارَّةٌ.', cat:'compare', icon:'⚖️'}
+];
+
+const CATS = {
+  all:   {label:'🔮 الكل', cls:''},
+  lesson:{label:'📱 الأسماء', cls:''},
+  adj:   {label:'🍊 الصفات', cls:'phrase-section'},
+  verb:  {label:'💜 الأفعال', cls:'connect-section'},
+  compare:{label:'⚖️ ألفاظ المقارنة', cls:'connect-section'},
+  time:  {label:'🔵 ظروف الزمان', cls:''},
+  opinion:{label:'🩷 عبارات الرأي', cls:'opinion-section'},
+};
+
+let currentCat = 'all';
+let synth = window.speechSynthesis;
+let currentPlaying = null;
+let currentUtt = null;          // keep a reference so the browser does not garbage-collect it mid-speech
+let noVoiceWarned = false;
+
+// Names of common Arabic voices (male / female) across Edge, Windows, macOS/iOS, Android
+const MALE_HINTS   = ['hamdan','hamed','shakir','naayf','maged','majed','tarik','tariq','omar','salem','fahed','jamal','khalid','youssef','yousef','male','ذكر'];
+const FEMALE_HINTS = ['fatima','zariyah','hoda','salma','laila','layla','mariam','maryam','amal','noor','sara','female','أنثى'];
+
+function arabicVoices(){
+  if(!synth) return [];
+  return synth.getVoices().filter(v=>/^ar([-_]|$)/i.test(v.lang) || /arab|عرب/i.test(v.name));
+}
+
+function voiceScore(v){
+  const n = v.name.toLowerCase();
+  let s = 0;
+  if(/female/.test(n) || FEMALE_HINTS.some(h=>n.includes(h))) s -= 10;
+  else if(MALE_HINTS.some(h=>n.includes(h))) s += 10;
+  if(/^ar[-_]ae/i.test(v.lang)) s += 3;       // Emirati Arabic first
+  else if(/^ar[-_]sa/i.test(v.lang)) s += 2;
+  else if(/^ar[-_]eg/i.test(v.lang)) s += 1;
+  if(/natural|online/.test(n)) s += 2;         // neural voices sound clearer
+  return s;
+}
+
+function pickVoice(){
+  const list = arabicVoices();
+  if(!list.length) return null;
+  return list.slice().sort((a,b)=>voiceScore(b)-voiceScore(a))[0];
+}
+
+function testAudio(){
+  speak('مرحباً، هذا اختبار للصوت. قاموس درس أحب هاتفي.');
+}
+
+function resetPlaying(){
+  if(currentPlaying){
+    currentPlaying.classList.remove('playing','playing-anim');
+    const btn = currentPlaying.querySelector('.audio-btn');
+    if(btn) btn.classList.remove('playing-anim');
+    currentPlaying = null;
+  }
+}
+
+function speak(text, cardEl){
+  if(!synth || typeof SpeechSynthesisUtterance === 'undefined'){
+    alert('هذا المتصفح لا يدعم النطق الصوتي. جرّب Microsoft Edge أو Google Chrome.');
+    return;
+  }
+  synth.cancel();
+  resetPlaying();
+
+  const voice = pickVoice();
+  if(!voice && !noVoiceWarned && synth.getVoices().length){
+    noVoiceWarned = true;
+    alert('لا يوجد صوت عربي على هذا الجهاز.\nجرّب متصفح Microsoft Edge، أو أضف حزمة الصوت العربي من إعدادات الجهاز.');
+  }
+
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = voice ? voice.lang : 'ar-SA';
+  utt.rate = 0.82;
+  utt.pitch = (voice && voiceScore(voice) >= 10) ? 1.05 : 1;   // male voice, slightly bright = young man
+  if(voice) utt.voice = voice;
+  currentUtt = utt;
+
+  const btn = cardEl ? cardEl.querySelector('.audio-btn') : null;
+  const done = ()=>{
+    if(cardEl) cardEl.classList.remove('playing');
+    if(btn) btn.classList.remove('playing-anim');
+    if(currentPlaying === cardEl) currentPlaying = null;
+  };
+  if(cardEl){
+    currentPlaying = cardEl;
+    cardEl.classList.add('playing');
+    if(btn) btn.classList.add('playing-anim');
+    utt.onend = done;
+  }
+  utt.onerror = done;
+
+  // speaking right after cancel() is silently dropped by Chrome/Edge, so wait a moment
+  setTimeout(()=>{ synth.resume(); synth.speak(utt); }, 80);
+}
+
+function playWord(id){
+  const w = WORDS.find(x=>x.id===id);
+  if(!w) return;
+  const card = document.getElementById('card-'+id);
+  speak(w.ar + '. ' + w.ex, card);
+}
+
+function buildFilters(){
+  const row = document.getElementById('filterRow');
+  row.innerHTML = Object.entries(CATS).map(([k,v])=>
+    `<button class="ftag${k===currentCat?' active':''}" onclick="setFilter('${k}')">${v.label}</button>`
+  ).join('');
+}
+
+function setFilter(cat){
+  currentCat = cat;
+  buildFilters();
+  renderCards();
+}
+
+function filterCards(){
+  renderCards();
+}
+
+function renderCards(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const grid = document.getElementById('cardsGrid');
+  const filtered = WORDS.filter(w=>{
+    const matchCat = currentCat==='all' || w.cat===currentCat;
+    const matchQ = !q || w.ar.includes(q) || w.en.toLowerCase().includes(q) || w.ex.includes(q);
+    return matchCat && matchQ;
+  });
+
+  document.getElementById('countLabel').textContent = filtered.length + ' كلمة';
+
+  if(!filtered.length){
+    grid.innerHTML = '<div class="no-results">🔍 لا توجد نتائج للبحث</div>';
+    return;
+  }
+
+  // Group by category for section dividers
+  const groups = {};
+  filtered.forEach(w=>{
+    if(!groups[w.cat]) groups[w.cat]=[];
+    groups[w.cat].push(w);
+  });
+
+  const catOrder = ['lesson','adj','verb','opinion','time','compare'];
+  const catNames = {
+    lesson:'📱 الأسماء — كلمات الدرس',
+    adj:'🍊 الصفات — أَصِفُ هَاتِفِي',
+    verb:'💜 الأفعال',
+    opinion:'🩷 عبارات الرأي',
+    time:'🔵 ظروف الزمان',
+    compare:'⚖️ ألفاظ المقارنة'
+  };
+
+  let html = '';
+  (currentCat==='all' ? catOrder : [currentCat]).forEach(cat=>{
+    const ws = groups[cat];
+    if(!ws || !ws.length) return;
+    const cls = CATS[cat]?.cls || '';
+    if(currentCat==='all'){
+      html += `<div class="section-divider"><span>${catNames[cat]||cat}</span></div>`;
+    }
+    ws.forEach(w=>{
+      html += `<div class="card ${cls}" id="card-${w.id}" onclick="playWord(${w.id})">
+        <div class="cat-badge cat-${w.cat}"></div>
+        <div class="card-icon">${w.icon}</div>
+        <div class="card-word">${w.ar}</div>
+        <span class="card-en">${w.en}</span>
+        <div class="card-ex">${w.ex}</div>
+        <button class="audio-btn" onclick="event.stopPropagation();playWord(${w.id})" aria-label="استمع">
+          <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        </button>
+      </div>`;
+    });
+  });
+
+  grid.innerHTML = html;
+}
+
+// Init voices
+if(window.speechSynthesis){
+  synth.getVoices();
+  if(synth.onvoiceschanged !== undefined){
+    synth.onvoiceschanged = ()=>{ synth.getVoices(); };
+  }
+}
+
+buildFilters();
+renderCards();
+</script>
+</body>
+</html>
